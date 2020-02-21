@@ -60,7 +60,8 @@
 simplexplot <- function(data, A, MGlist = NULL, data.extra = NULL,
                         corner.order = NULL, col = 'gray', pch = 1, cex = 0.8,
                         mg.col = 'red', mg.pch = 1, mg.cex = 1.2,
-                        ex.col = "black", ex.pch = 19, ex.cex = 1.5, ...){
+                        ex.col = "black", ex.pch = 19, ex.cex = 1.5, 
+                        plot = TRUE,...){
     if (is(data, "data.frame")) {
         data <- as.matrix(data)
     } else if (is(data, "SummarizedExperiment")) {
@@ -128,20 +129,24 @@ simplexplot <- function(data, A, MGlist = NULL, data.extra = NULL,
     tmp[2,] <- tmp[2,] / c(sqrt(tmp[2,] %*% tmp[2,]))
     Xp <- tmp %*% Xproj
 
-    plot(Xp[1,], Xp[2,], col = col, cex = cex, pch = pch,
-        xlab = NA, ylab = NA, asp = 1, ...)
-
-    for(i in seq_along(MGlist)){
-        points(Xp[1,MGlist[[i]]], Xp[2,MGlist[[i]]],
-            cex=mg.cex, col=mg.col[i], pch = mg.pch[i] )
-    }
-
-    if(!is.null(data.extra)){
-        data.extra <- t(data.extra / rowSums(data.extra))
-        Xpe <- tmp %*% data.extra
-        for(i in seq_len(ncol(data.extra))){
-            points(Xpe[1,i], Xpe[2,i],
-                   cex=ex.cex, col=ex.col[i], pch = ex.pch[i])
+    if (plot) {
+        plot(Xp[1,], Xp[2,], col = col, cex = cex, pch = pch,
+             xlab = NA, ylab = NA, asp = 1, ...)
+        
+        for(i in seq_along(MGlist)){
+            points(Xp[1,MGlist[[i]]], Xp[2,MGlist[[i]]],
+                   cex=mg.cex, col=mg.col[i], pch = mg.pch[i] )
         }
+        
+        if(!is.null(data.extra)){
+            data.extra <- t(data.extra / rowSums(data.extra))
+            Xpe <- tmp %*% data.extra
+            for(i in seq_len(ncol(data.extra))){
+                points(Xpe[1,i], Xpe[2,i],
+                       cex=ex.cex, col=ex.col[i], pch = ex.pch[i])
+            }
+        }
+    } else {
+        return(Xp)
     }
 }
